@@ -15,8 +15,8 @@ import urllib
 from jinja2 import Environment, FileSystemLoader
 
 def jinja_render(job):
-    env = Environment(loader=FileSystemLoader('templates/lava-build/'))
-    template = env.get_template('single-defconfig-build.jinja2')
+    env = Environment(loader=FileSystemLoader('templates'))
+    template = env.get_template('lava-build/single-defconfig-build.jinja2')
     return template.render(job)
 
 def parse_prop(prop):
