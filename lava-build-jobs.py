@@ -42,6 +42,8 @@ def main(args):
         job['name'] = "kci-%s-%s" % (job_dir, defconfig_name)
         job_file = job_dir + '/' + job['name'] + '.yaml'
         job['defconfig'] = defconfig
+        job['api'] = args.get('api')
+        job['token'] = args.get('token')
         job.update(data)
         with open(job_file, 'w') as f:
             f.write(jinja_render(job))
@@ -51,6 +53,8 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--properties", help="Defconfig builder properties file", required=True)
+    parser.add_argument("--api", help="KernelCI API", required=True)
+    parser.add_argument("--token", help="KernelCI API token", required=True)
     parser.add_argument("--priority", choices=['high', 'medium', 'low', 'HIGH', 'MEDIUM', 'LOW'],
                         help="priority for LAVA jobs", default='high')
     args = vars(parser.parse_args())
