@@ -1,0 +1,45 @@
+device_type: docker
+job_name: zephyr-build-something
+timeouts:
+  job:
+    minutes: 300
+  action:
+    minutes: 300
+
+priority: medium
+visibility: public
+
+actions:
+- deploy:
+    timeout:
+      minutes: 30
+    to: docker
+    image: "debian:sid"
+    os: debian
+
+- boot:
+    method: docker
+    command: /bin/bash
+    prompts:
+    - 'root@lava'
+
+- test:
+    name: kernelci-build-logic
+    timeout:
+      minutes: 30
+    definitions:
+    - from: inline
+      repository:
+        metadata:
+          format: Lava-Test Test Definition 1.0
+          name: kernelci-build-logic
+          description: "Trigger KernelCI trees"
+        run:
+          steps:
+          - apt-get update
+          - apt-get -y install git wget python2.7 expect grep tar gzip curl python-requests
+          - git clone https://github.com/mattface/build-logic.git
+          - cd build-logic
+          - ./trigger-cronjob.sh
+      name: kernelci-build-logic
+      path: inline/kernelci-build-logic.yaml

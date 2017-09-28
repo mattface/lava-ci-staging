@@ -1,0 +1,61 @@
+device_type: docker
+job_name: {{ name }}
+
+tags:
+- builder
+
+timeouts:
+  job:
+    minutes: 300
+  action:
+    minutes: 300
+
+priority: medium
+visibility: personal
+
+actions:
+- deploy:
+    timeout:
+      minutes: 30
+    to: docker
+    image: "mattface/kernelci-lava-builder:latest"
+    os: debian
+
+- boot:
+    method: docker
+    command: /bin/bash
+    prompts:
+    - 'root@lava'
+
+- test:
+    name: kernelci-defconfig-builder
+    timeout:
+      minutes: 30
+    definitions:
+    - from: inline
+      repository:
+        metadata:
+          format: Lava-Test Test Definition 1.0
+          name: kernelci-defconfig-builder
+          description: "KCI: Build a defconfig"
+        run:
+          steps:
+          - export TREE={{ tree }}
+          - export TREE_NAME={{ tree_name }}
+          - export BRANCH={{ branch }}
+          - export GIT_DESCRIBE={{ git_describe }}
+          - export GIT_DESCRIBE_VERBOSE={{ git_describe_verbose }}
+          - export COMMIT_ID={{ commit_id }}
+          - export ARCH={{ arch }}
+          - export defconfig={{ defconfig }}
+          - export SRC_TARBALL={{ src_tarball }}
+          - export API={{ api }}
+          - export TOKEN={{ token }}
+          - export WORKSPACE=/root
+          - export PUBLISH=true
+          - cd ${WORKSPACE}
+          - apt-get -y install python-requests
+          - git clone https://github.com/kernelci/kernelci-build.git
+          - ./kernelci-build/jenkins/kernel-single-defconfig-builder.sh
+      name: kernelci-defconfig-builder
+      path: inline/kernelci-defconfig-builder.yaml
