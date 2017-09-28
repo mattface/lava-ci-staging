@@ -31,8 +31,6 @@ def parse_prop(prop):
 
 def main(args):
     data = parse_prop(args.get('properties'))
-    data['api'] = args.get('api')
-    data['token'] = args.get('token')
     job_dir = '%s-%s-%s-%s' % (data['tree_name'], data['branch'], data['git_describe'], data['arch'])
     if not os.path.exists(job_dir):
         os.mkdir(job_dir)
@@ -53,8 +51,6 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument("--properties", help="Defconfig builder properties file", required=True)
-    parser.add_argument("--api", help="KernelCI API URL", required=True)
-    parser.add_argument("--token", help="KernelCI API Token", required=True)
     parser.add_argument("--priority", choices=['high', 'medium', 'low', 'HIGH', 'MEDIUM', 'LOW'],
                         help="priority for LAVA jobs", default='high')
     args = vars(parser.parse_args())
